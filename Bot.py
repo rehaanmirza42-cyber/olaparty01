@@ -29,7 +29,7 @@ def get_v1_enter_packet(room_id):
     prefix = bytes.fromhex("721C20231351A076121D4010A065825006")
     p2 = bytes.fromhex("1000F29000C3330A19E6057426968661674212")
     inner_prefix = bytes.fromhex("9802000A")
-    inner_len = encode_varint(len(id_bytes) + 4)
+    inner_len = encode_varint(len_id + 4)
     p1 = bytes.fromhex("0A")
     return p1 + len_id + id_bytes + p2 + inner_len + inner_prefix + len_id + id_bytes
 
