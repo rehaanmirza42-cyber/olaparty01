@@ -4,7 +4,6 @@ import threading
 import os
 from flask import Flask
 
-# ==================== FLASK (24/7 Keep-Alive) ====================
 app = Flask(__name__)
 
 @app.route('/')
@@ -15,14 +14,14 @@ def keep_alive():
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
 
-# ==================== 7 BOTS DATA ====================
+# ==================== BOTS DATA ====================
 BOTS = [
-    # ----- ACCOUNT 1 (UID: 4470969373) -----
+    # ----- ACCOUNT 1 (UID: 4470969373) - FIXED 50 01 -----
     {
         "uid": "4470969373",
         "auth_token": "NbzBgqsnYoyLLbnPdHVMPT69MszR5cU3D64f2oh0I%2BfoQ0q0F%2BU8gUr9GqZhV9WV%2CnNM9ovMxw6992CvTiy8C%2FZ6KoKSR2cWGj5gD%2BWRsTFF2m9t3W2hPInOo%2FVOEj3YKZHxEK3%2FhV20bOHn8CTNyxU5zuoHnYPoIY4qRrdY71lkmObciS3cullJ%2BzL6vBaLsHb0%2FZDERWHBUmhdrCe9tkfHTcjPrYarSrKyhZaiiufz%2F0ZJwqWq9G3C4j7Xs5%2F0yL%2Bh9b2QNzXrWm4EjbRP%2BfKxqISnKMXQ6zN1TQYnzXvGl2gCu4udygGFEv2VK6ddUCHqZxF4kHv5KxLosMrqX%2BBCLySnCoA3RUNGJ8uXfghyUd%2FPXHsukfROg2FeMUQ%2BOVhTfRMzsjC943Qz5trdRUdoyc5BwfqtPfBS0JmnGnTQqxszVpu3cd2JmbW1qs8rLFyYtR8PvQxTUkyKfc8ZcC7e9EJCamrba7z1k%2BDFvWb72M%2BOD6QJTasR0jrnupajQXYRkkJW74IZdKQPgE%2Flu628MS1nx6i9aOJ92mO7Fpv%2BcVDiahigIS5%2BXEb%2BeGDZj",
         "device_id": "76b6e7b1b202c790cac80dc34d678cd3",
-        "join_frame_hex": """0A 86 01 50 00 18 00 62 1D 0A 06 58 2D 50 63 69 64 12 13 31 31 35 32 39 32 31 35 30 34 36 32 34 37 37 33 32 35 32 22 05 65 6E 5F 69 6E 3A 0D 43 68 61 6E 6E 65 6C 2E 45 6E 74 65 72 48 01 32 20 43 5F 32 30 38 34 39 30 38 35 39 31 36 30 34 38 31 34 37 32 30 5F 56 32 5F 49 4E 5F 30 5F 49 4E 10 F0 D7 93 8E FD 33 0A 19 6E 65 74 2E 69 68 61 67 6F 2E 63 68 61 6E 6E 65 6C 2E 73 72 76 2E 6D 67 72 42 05 30 2E 30 2E 30 1A B1 04 98 02 00 0A 20 43 5F 32 30 38 34 39 30 38 35 39 31 36 30 34 38 31 34 37 32 30 5F 56 32 5F 49 4E 5F 30 5F 49 4E 72 19 12 02 31 31 1A 07 61 61 72 63 68 36 34 0A 07 50 69 78 65 6C 20 34 28 8F 58 5A 00 AA 02 33 0A 1D 1A 07 61 61 72 63 68 36 34 10 08 28 80 BE 92 01 20 80 C4 77 0A 07 4D 53 4D 4E 49 4C 45 22 06 47 6F 6F 67 6C 65 1A 07 50 69 78 65 6C 20 34 10 8F 58 FA 01 28 0A 00 22 00 52 02 33 31 5A 01 31 62 01 32 12 16 31 37 38 35 39 33 30 37 37 31 33 38 38 39 36 36 36 37 38 37 39 35 1A 00 8A 02 06 08 00 18 00 10 00 A0 02 00 52 00 F0 01 00 1A 86 02 DA 02 01 31 9A 07 01 31 32 01 31 E8 07 00 5A 03 0A 01 31 B8 06 01 60 00 90 02 01 0A 01 31 FA 03 01 31 90 05 00 F2 03 01 31 C0 07 00 C8 07 00 D0 07 00 50 01 18 01 C8 02 00 90 03 01 F8 01 01 C0 06 01 98 02 81 A0 04 F0 06 01 A8 06 00 EA 06 01 31 8A 05 06 12 01 31 0A 01 31 AA 08 01 31 E0 03 01 A0 01 01 B8 08 01 A8 05 01 C8 08 00 C0 08 01 80 02 01 A0 05 01 82 04 01 31 EA 03 01 31 B0 04 01 98 05 01 2A 01 31 A8 07 00 98 03 00 D8 08 01 A8 01 01 20 01 B8 04 01 98 08 00 B2 01 01 31 90 08 00 12 01 31 A0 04 01 90 04 00 88 04 01 B0 06 01 DA 06 01 31 D0 06 01 B0 08 00 C8 06 01 F8 06 00 82 05 01 31 F0 01 01 D2 02 33 98 02 00 90 03 00 A8 01 00 80 02 00 80 05 00 A8 05 00 90 02 00 D8 03 00 98 03 00 F8 01 00 B0 01 00 E8 01 00 A0 01 00 0A 01 31 88 02 00 E0 01 00 D8 01 00 68 00 E0 02 01 88 02 01 10 09 82 01 6C 18 00 40 00 12 07 52 65 68 61 6E 41 69 30 00 20 01 28 00 0A 57 68 74 74 70 73 3A 2F 2F 6F 2D 69 6E 2E 6F 6C 61 70 61 72 74 79 2E 63 6F 6D 2F 62 6C 6F 62 2F 76 32 2F 61 6C 69 2F 69 6E 2F 30 2F 31 2F 6E 73 2F 32 31 78 77 65 31 70 2F 75 75 72 6C 2F 34 34 37 30 39 36 39 33 37 33 5F 31 37 38 35 39 31 36 32 36 30 2E 6A 70 65 67 90 02 00 10 00"""
+        "join_frame_hex": """0A 86 01 50 01 18 00 62 1D 0A 06 58 2D 50 63 69 64 12 13 31 31 35 32 39 32 31 35 30 34 36 32 34 37 37 33 32 35 32 22 05 65 6E 5F 69 6E 3A 0D 43 68 61 6E 6E 65 6C 2E 45 6E 74 65 72 48 01 32 20 43 5F 32 30 38 34 39 30 38 35 39 31 36 30 34 38 31 34 37 32 30 5F 56 32 5F 49 4E 5F 30 5F 49 4E 10 F0 D7 93 8E FD 33 0A 19 6E 65 74 2E 69 68 61 67 6F 2E 63 68 61 6E 6E 65 6C 2E 73 72 76 2E 6D 67 72 42 05 30 2E 30 2E 30 1A B1 04 98 02 00 0A 20 43 5F 32 30 38 34 39 30 38 35 39 31 36 30 34 38 31 34 37 32 30 5F 56 32 5F 49 4E 5F 30 5F 49 4E 72 19 12 02 31 31 1A 07 61 61 72 63 68 36 34 0A 07 50 69 78 65 6C 20 34 28 8F 58 5A 00 AA 02 33 0A 1D 1A 07 61 61 72 63 68 36 34 10 08 28 80 BE 92 01 20 80 C4 77 0A 07 4D 53 4D 4E 49 4C 45 22 06 47 6F 6F 67 6C 65 1A 07 50 69 78 65 6C 20 34 10 8F 58 FA 01 28 0A 00 22 00 52 02 33 31 5A 01 31 62 01 32 12 16 31 37 38 35 39 33 30 37 37 31 33 38 38 39 36 36 36 37 38 37 39 35 1A 00 8A 02 06 08 00 18 00 10 00 A0 02 00 52 00 F0 01 00 1A 86 02 DA 02 01 31 9A 07 01 31 32 01 31 E8 07 00 5A 03 0A 01 31 B8 06 01 60 00 90 02 01 0A 01 31 FA 03 01 31 90 05 00 F2 03 01 31 C0 07 00 C8 07 00 D0 07 00 50 01 18 01 C8 02 00 90 03 01 F8 01 01 C0 06 01 98 02 81 A0 04 F0 06 01 A8 06 00 EA 06 01 31 8A 05 06 12 01 31 0A 01 31 AA 08 01 31 E0 03 01 A0 01 01 B8 08 01 A8 05 01 C8 08 00 C0 08 01 80 02 01 A0 05 01 82 04 01 31 EA 03 01 31 B0 04 01 98 05 01 2A 01 31 A8 07 00 98 03 00 D8 08 01 A8 01 01 20 01 B8 04 01 98 08 00 B2 01 01 31 90 08 00 12 01 31 A0 04 01 90 04 00 88 04 01 B0 06 01 DA 06 01 31 D0 06 01 B0 08 00 C8 06 01 F8 06 00 82 05 01 31 F0 01 01 D2 02 33 98 02 00 90 03 00 A8 01 00 80 02 00 80 05 00 A8 05 00 90 02 00 D8 03 00 98 03 00 F8 01 00 B0 01 00 E8 01 00 A0 01 00 0A 01 31 88 02 00 E0 01 00 D8 01 00 68 00 E0 02 01 88 02 01 10 09 82 01 6C 18 00 40 00 12 07 52 65 68 61 6E 41 69 30 00 20 01 28 00 0A 57 68 74 74 70 73 3A 2F 2F 6F 2D 69 6E 2E 6F 6C 61 70 61 72 74 79 2E 63 6F 6D 2F 62 6C 6F 62 2F 76 32 2F 61 6C 69 2F 69 6E 2F 30 2F 31 2F 6E 73 2F 32 31 78 77 65 31 70 2F 75 75 72 6C 2F 34 34 37 30 39 36 39 33 37 33 5F 31 37 38 35 39 31 36 32 36 30 2E 6A 70 65 67 90 02 00 10 00"""
     },
     # ----- ACCOUNT 2 (UID: 4462154661) -----
     {
@@ -68,53 +67,26 @@ BOTS = [
     }
 ]
 
-# ==================== KEEP-ALIVE FRAMES ====================
-FRAME_ACTIVE = bytes.fromhex(
-    "0A29500118002205655F696E3A004800320010AAEEB387FD330A0D696B78645F6F6E6C696E655F"
-    "6442002A80011801227A0A06726F6F6D69641270435F3230383439303835393136303438313437"
-    "32305F56325F494E5F305F494E7C636861747C3137383539313635363836333838323532323833"
-    "35347C307C347C7C327C7C7C7C307C307C307C307C317C327C307C31353030357C307C307C7C7C"
-    "307C7C7C327C307C7C307C7C7C7C7C10001003"
-)
-FRAME_GET_CINFO = bytes.fromhex(
-    "0A8950011800621D0A06582D506369641213313135323932313530343632343737333235322205"
-    "656E5F696E3A104368616E6E656C2E47657443496E666F48013220435F32303834393038353931"
-    "3630343831343732305F56325F494E5F305F494E10E7D7938EFD330A196E65742E696861676F2E"
-    "6368616E6E656C2E7372762E6D67724205302E302E301AB7020A20435F32303834393038353931"
-    "3630343831343732305F56325F494E5F305F494E"
-)
-FRAME_GET_HISTORY = bytes.fromhex(
-    "0A7250001800621D0A06582D506369641213313135323932313530343632343737333235322205"
-    "656E5F696E3A194368616E6E656C2E476574486973746F72794368616E6E656C4801320010B4BD"
-    "938EFD330A196E65742E696861676F2E6368616E6E656C2E7372762E6D67724205302E302E301A"
-    "4A1220435F323038343930383539313630343831343732305F56325F494E5F305F494E1200435F"
-    "210500001000"
-)
-HEARTBEAT_FRAMES = [FRAME_ACTIVE, FRAME_GET_CINFO, FRAME_GET_HISTORY]
+# ==================== HEARTBEAT USE JOIN FRAME ====================
+# Ab hum heartbeat mein Channel.Enter frame bhejenge (jisme 50 01 hai) 
+# taaki status active rahe. FRAME_ACTIVE ki zaroorat nahi.
 
-# ==================== BOT ENGINE ====================
 def start_bot(config):
     uid = config["uid"]
-    print(f"🚀 Starting bot for UID: {uid}")
+    join_frame_bytes = bytes.fromhex(config["join_frame_hex"].replace(" ", "").replace("\n", ""))
 
     def on_open(ws):
         print(f"✅ Bot {uid} connected.")
-        ws.send(FRAME_ACTIVE, websocket.ABNF.OPCODE_BINARY)
-        time.sleep(0.3)
-        join_frame = bytes.fromhex(config["join_frame_hex"].replace(" ", "").replace("\n", ""))
-        ws.send(join_frame, websocket.ABNF.OPCODE_BINARY)
-        print(f"🚀 Bot {uid} sent Channel.Enter.")
-        time.sleep(0.3)
-        ws.send(FRAME_ACTIVE, websocket.ABNF.OPCODE_BINARY)
-        print(f"✅ Bot {uid} is ONLINE in the room!")
+        # Pehle join frame bhejo (active)
+        ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
+        print(f"🚀 Bot {uid} sent Channel.Enter (active).")
 
         def heartbeat():
-            idx = 0
             while True:
                 time.sleep(20)
                 try:
-                    ws.send(HEARTBEAT_FRAMES[idx % len(HEARTBEAT_FRAMES)], websocket.ABNF.OPCODE_BINARY)
-                    idx += 1
+                    # Har 20 sec mein join frame dobara bhejo
+                    ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
                 except:
                     break
         threading.Thread(target=heartbeat, daemon=True).start()
@@ -159,24 +131,20 @@ def start_bot(config):
                                 on_ping=on_ping, on_error=on_error, on_close=on_close)
     ws.run_forever(ping_interval=20, ping_timeout=10)
 
-# ==================== RENDER FIX: START ALL BOTS ====================
+# ==================== START ALL BOTS ====================
 def start_all_bots():
-    print("=== OlaParty 7 Bots Starting (Render Mode) ===")
+    print("=== OlaParty 7 Bots Starting (Heartbeat = Join Frame) ===")
     for bot in BOTS:
         thread = threading.Thread(target=start_bot, args=(bot,))
         thread.daemon = True
         thread.start()
         time.sleep(2)
 
-print("⚡ Bot script loaded on Render! Starting Flask + Bots...")
-
-# Start Flask web server in background
+print("⚡ Bot script loaded! Starting Flask + Bots...")
 threading.Thread(target=keep_alive, daemon=True).start()
-
-# Start all bots in background
 threading.Thread(target=start_all_bots, daemon=True).start()
 
-# 🔥 Keep main thread alive so Render doesn't exit
+# Keep main thread alive
 print("🔄 Bot is running. Keeping main thread alive...")
 while True:
     time.sleep(60)
