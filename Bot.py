@@ -168,7 +168,6 @@ def start_all_bots():
         thread.start()
         time.sleep(2)
 
-# This runs when Gunicorn imports Bot.py
 print("⚡ Bot script loaded on Render! Starting Flask + Bots...")
 
 # Start Flask web server in background
@@ -177,5 +176,7 @@ threading.Thread(target=keep_alive, daemon=True).start()
 # Start all bots in background
 threading.Thread(target=start_all_bots, daemon=True).start()
 
-# Main thread is free for Gunicorn to serve requests
-# (No infinite loop here, Gunicorn handles it!)
+# 🔥 Keep main thread alive so Render doesn't exit
+print("🔄 Bot is running. Keeping main thread alive...")
+while True:
+    time.sleep(60)
