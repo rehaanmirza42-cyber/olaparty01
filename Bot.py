@@ -68,7 +68,7 @@ BOTS = [
     }
 ]
 
-# ==================== KEEP-ALIVE FRAMES (Same for all bots) ====================
+# ==================== KEEP-ALIVE FRAMES ====================
 FRAME_ACTIVE = bytes.fromhex(
     "0A29500118002205655F696E3A004800320010AAEEB387FD330A0D696B78645F6F6E6C696E655F"
     "6442002A80011801227A0A06726F6F6D69641270435F3230383439303835393136303438313437"
@@ -159,18 +159,23 @@ def start_bot(config):
                                 on_ping=on_ping, on_error=on_error, on_close=on_close)
     ws.run_forever(ping_interval=20, ping_timeout=10)
 
-# ==================== MAIN ====================
-if __name__ == "__main__":
-    # Start Flask in background for 24/7 keep-alive (useful on cloud)
-    threading.Thread(target=keep_alive, daemon=True).start()
-    print("=== OlaParty 7 Bots Starting ===")
-    
+# ==================== RENDER FIX: START ALL BOTS ====================
+def start_all_bots():
+    print("=== OlaParty 7 Bots Starting (Render Mode) ===")
     for bot in BOTS:
         thread = threading.Thread(target=start_bot, args=(bot,))
         thread.daemon = True
         thread.start()
-        time.sleep(2)  # Prevent rate-limiting
-    
-    # Keep main thread alive
-    while True:
-        time.sleep(60)
+        time.sleep(2)
+
+# This runs when Gunicorn imports Bot.py
+print("⚡ Bot script loaded on Render! Starting Flask + Bots...")
+
+# Start Flask web server in background
+threading.Thread(target=keep_alive, daemon=True).start()
+
+# Start all bots in background
+threading.Thread(target=start_all_bots, daemon=True).start()
+
+# Main thread is free for Gunicorn to serve requests
+# (No infinite loop here, Gunicorn handles it!)
