@@ -15,8 +15,8 @@ def keep_alive():
     app.run(host='0.0.0.0', port=port)
 
 # ==================== 36 BOTS DATA (ALL WITH UNIQUE DEVICE IDs) ====================
-# Room: C_1937779646159154560_V2_IN_0_IN
-# Token: 3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQk7IcdG1PFM=
+# Room: C_2085244623114195840_V2_IN_0_IN
+# Token:OIyncSVAwBEYQol-A8JwhWc-4-zPsCAX2knSDDdbLmzUoDcdwxFrQA1CPwjOGPpuUs0EueMce_aMlOSx4daWvXt8tBBEwcje1tpHIePN7Z2Bqt5WtI3g6ulVboUnDhdmsABJEGX3oGMJvPzVxwZB8YQ5Mf4_15pqStXJtewRssB5C-Y_Sb_BPIGouRWpV9frSI3bI_D3ro=
 
 BOTS = [
     # ----- ACCOUNT 1 (UID: 4470969373) -----
