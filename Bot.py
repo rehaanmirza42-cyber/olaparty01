@@ -15,8 +15,8 @@ def keep_alive():
     app.run(host='0.0.0.0', port=port)
 
 # ==================== NEW ROOM (Replace old with this) ====================
-ROOM_ID = "C_2085244623114195840_V2_IN_0_IN"
-ROOM_TOKEN = "-OIyncSVAwBEYQol-A8JwhWc-4-zPsCAX2knSDDdbLmzUoDcdwxFrQA1CPwjOGPpuUs0EueMce_aMlOSx4daWvXt8tBBEwcje1tpHIePN7Z2Bqt5WtI3g6ulVboUnDhdmsABJEGX3oGMJvPzVxwZB8YQ5Mf4_15pqStXJtewRssB5C-Y_Sb_BPIGouRWpV9frSI3bI_D3ro="
+ROOM_ID = "C_1875501089407883904_V2_IN_0_IN"
+ROOM_TOKEN = "J4wAcNYvtBr8lkHbX18tpUV1vLzxpPVVUXXN0m8kJFZdCn_PW7_d_HWohWQcPHVCNW9bFMuSXY1OFBaWPA4jDPPCxi9yS5Fh3qwwLdu812-VAjChclXQuHJuDtZHYneabTKAZXGXNLD4x-VVEbXPBVt5-jbCslfvuerambOtMLwzvOiRrTv-ZdudVApSl03BA1EugSqbdy4="
 
 # ==================== OLD VALUES (Jis room ka frame hai – will be replaced) ====================
 OLD_ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
