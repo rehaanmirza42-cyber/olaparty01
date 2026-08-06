@@ -14,13 +14,14 @@ def keep_alive():
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
 
-# ==================== NEW ROOM (Replace old with this) ====================
-ROOM_ID = "C_1875501089407883904_V2_IN_0_IN"
-ROOM_TOKEN = "J4wAcNYvtBr8lkHbX18tpUV1vLzxpPVVUXXN0m8kJFZdCn_PW7_d_HWohWQcPHVCNW9bFMuSXY1OFBaWPA4jDPPCxi9yS5Fh3qwwLdu812-VAjChclXQuHJuDtZHYneabTKAZXGXNLD4x-VVEbXPBVt5-jbCslfvuerambOtMLwzvOiRrTv-ZdudVApSl03BA1EugSqbdy4="
+# ==================== TARGET ROOM (OLD ROOM) ====================
+ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
+ROOM_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQk7IcdG1PFM="
 
-# ==================== OLD VALUES (Jis room ka frame hai – will be replaced) ====================
-OLD_ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
-OLD_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQk7IcdG1PFM="
+# ==================== OLD VALUES (Not needed for redirection now) ====================
+OLD_ROOM_ID = "C_1875501089407883904_V2_IN_0_IN"
+OLD_TOKEN = "J4wAcNYvtBr8lkHbX18tpUV1vLzxpPVVUXXN0m8kJFZdCn_PW7_d_HWohWQcPHVCNW9bFMuSXY1OFBaWPA4jDPPCxi9yS5Fh3qwwLdu812-VAjChclXQuHJuDtZHYneabTKAZXGXNLD4x-VVEbXPBVt5-jbCslfvuerambOtMLwzvOiRrTv-ZdudVApSl03BA1EugSqbdy4="
+
 
 def replace_room_in_frame(frame_hex):
     clean_hex = frame_hex.replace(" ", "").replace("\n", "")
