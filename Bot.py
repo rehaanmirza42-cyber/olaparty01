@@ -8,16 +8,31 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "OlaParty 36 Bots are running 24/7!"
+    return "OlaParty 36 Bots are running 24/7 in New Room!"
 
 def keep_alive():
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
 
-# ==================== 36 BOTS DATA (ALL WITH UNIQUE DEVICE IDs) ====================
-# Room: C_2085244623114195840_V2_IN_0_IN
-# Token:OIyncSVAwBEYQol-A8JwhWc-4-zPsCAX2knSDDdbLmzUoDcdwxFrQA1CPwjOGPpuUs0EueMce_aMlOSx4daWvXt8tBBEwcje1tpHIePN7Z2Bqt5WtI3g6ulVboUnDhdmsABJEGX3oGMJvPzVxwZB8YQ5Mf4_15pqStXJtewRssB5C-Y_Sb_BPIGouRWpV9frSI3bI_D3ro=
+# ==================== NEW ROOM (Replace old with this) ====================
+ROOM_ID = "C_2085244623114195840_V2_IN_0_IN"
+ROOM_TOKEN = "-OIyncSVAwBEYQol-A8JwhWc-4-zPsCAX2knSDDdbLmzUoDcdwxFrQA1CPwjOGPpuUs0EueMce_aMlOSx4daWvXt8tBBEwcje1tpHIePN7Z2Bqt5WtI3g6ulVboUnDhdmsABJEGX3oGMJvPzVxwZB8YQ5Mf4_15pqStXJtewRssB5C-Y_Sb_BPIGouRWpV9frSI3bI_D3ro="
 
+# ==================== OLD VALUES (Jis room ka frame hai – will be replaced) ====================
+OLD_ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
+OLD_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQk7IcdG1PFM="
+
+def replace_room_in_frame(frame_hex):
+    clean_hex = frame_hex.replace(" ", "").replace("\n", "")
+    old_room_hex = OLD_ROOM_ID.encode('utf-8').hex().upper()
+    new_room_hex = ROOM_ID.encode('utf-8').hex().upper()
+    clean_hex = clean_hex.replace(old_room_hex, new_room_hex)
+    old_token_hex = OLD_TOKEN.encode('utf-8').hex().upper()
+    new_token_hex = ROOM_TOKEN.encode('utf-8').hex().upper()
+    clean_hex = clean_hex.replace(old_token_hex, new_token_hex)
+    return bytes.fromhex(clean_hex)
+
+# ==================== BOTS DATA (36 Accounts) ====================
 BOTS = [
     # ----- ACCOUNT 1 (UID: 4470969373) -----
     {
@@ -276,12 +291,13 @@ BOTS = [
 # ==================== HEARTBEAT ====================
 def start_bot(config):
     uid = config["uid"]
-    join_frame_bytes = bytes.fromhex(config["join_frame_hex"].replace(" ", "").replace("\n", ""))
+    # Dynamically replace room in frame
+    join_frame_bytes = replace_room_in_frame(config["join_frame_hex"])
 
     def on_open(ws):
         print(f"✅ Bot {uid} connected with device {config['device_id']}.")
         ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
-        print(f"🚀 Bot {uid} sent Channel.Enter (active).")
+        print(f"🚀 Bot {uid} sent Channel.Enter for new room.")
 
         def heartbeat():
             while True:
@@ -334,7 +350,7 @@ def start_bot(config):
 
 # ==================== START ALL BOTS ====================
 def start_all_bots():
-    print("=== OlaParty 36 Bots Starting (Unique Device IDs) ===")
+    print("=== OlaParty 36 Bots Starting (New Room) ===")
     for bot in BOTS:
         thread = threading.Thread(target=start_bot, args=(bot,))
         thread.daemon = True
