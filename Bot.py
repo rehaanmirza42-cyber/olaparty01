@@ -14,11 +14,10 @@ def keep_alive():
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
 
-# ==================== TARGET ROOM (OLD ROOM) ====================
-ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
-ROOM_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQk7IcdG1PFM="
+# ==================== NEW TARGET ROOM ====================
+ROOM_ID = "C_1894232843312212416_V2_IN_0_IN"
+ROOM_TOKEN = "Vr-dn2Edht6fLn70BYyBP2i2qKGl6zLU2Yn7KxB7E6VFAnMUpU6EaNya5ZbAmeoD260AU2fXjolq2UPv0pTOfgo8SpSMne4zu_z4ict5LZbdIUlbIoFVoXmLVE-6duCtIj3fVfGxkU4ejHg0GCRls-48k_LP6YHCux5Rex9Z6Jjm72OeCZEBdMR7iEsSWrffDyK_zsQZt5A="
 
-# ==================== OLD VALUES (Not needed for redirection now) ====================
 OLD_ROOM_ID = "C_1875501089407883904_V2_IN_0_IN"
 OLD_TOKEN = "J4wAcNYvtBr8lkHbX18tpUV1vLzxpPVVUXXN0m8kJFZdCn_PW7_d_HWohWQcPHVCNW9bFMuSXY1OFBaWPA4jDPPCxi9yS5Fh3qwwLdu812-VAjChclXQuHJuDtZHYneabTKAZXGXNLD4x-VVEbXPBVt5-jbCslfvuerambOtMLwzvOiRrTv-ZdudVApSl03BA1EugSqbdy4="
 
