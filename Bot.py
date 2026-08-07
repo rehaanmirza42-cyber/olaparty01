@@ -2,22 +2,27 @@ import websocket
 import time
 import threading
 import os
-import random
-import string
 from flask import Flask
-from accounts import BOTS  # <-- Account data yahan se import ho raha hai
+import sys
+
+# Try to import accounts from accounts.py
+try:
+    from accounts import BOTS
+except ImportError:
+    BOTS = []
+    print("⚠️ accounts.py not found. Please create it with your BOTS list.")
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "OlaParty Bots are running!"
+    return "OlaParty Bots are running 24/7!"
 
 def keep_alive():
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
 
-# ==================== ROOM DETAILS (Yahan apna room daalo) ====================
+# ==================== TARGET ROOM ====================
 ROOM_ID = "C_1894232843312212416_V2_IN_0_IN"
 ROOM_TOKEN = "Vr-dn2Edht6fLn70BYyBP2i2qKGl6zLU2Yn7KxB7E6VFAnMUpU6EaNya5ZbAmeoD260AU2fXjolq2UPv0pTOfgo8SpSMne4zu_z4ict5LZbdIUlbIoFVoXmLVE-6duCtIj3fVfGxkU4ejHg0GCRls-48k_LP6YHCux5Rex9Z6Jjm72OeCZEBdMR7iEsSWrffDyK_zsQZt5A="
 
@@ -34,33 +39,24 @@ def replace_room_in_frame(frame_hex):
     clean_hex = clean_hex.replace(old_token_hex, new_token_hex)
     return bytes.fromhex(clean_hex)
 
-def generate_device_id():
-    return ''.join(random.choices(string.hexdigits.lower(), k=32))
-
-# ==================== AUTO UNIQUE DEVICE ID ====================
-used_device_ids = set()
-for bot in BOTS:
-    if not bot.get("device_id") or bot["device_id"] in used_device_ids:
-        new_dev = generate_device_id()
-        while new_dev in used_device_ids:
-            new_dev = generate_device_id()
-        bot["device_id"] = new_dev
-    used_device_ids.add(bot["device_id"])
-
-# ==================== BOT RUNNER ====================
+# ==================== HEARTBEAT ====================
 def start_bot(config):
     uid = config["uid"]
-    device_id = config["device_id"]
     join_frame_bytes = replace_room_in_frame(config["join_frame_hex"])
-    reconnect_delay = 2
 
     def on_open(ws):
-        print(f"✅ Bot {uid} connected (Device: {device_id})")
-        try:
-            ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
-            print(f"🚀 Bot {uid} joined room")
-        except Exception as e:
-            print(f"⚠️ Bot {uid} send error: {e}")
+        print(f"✅ Bot {uid} connected with device {config['device_id']}.")
+        ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
+        print(f"🚀 Bot {uid} sent Channel.Enter for new room.")
+
+        def heartbeat():
+            while True:
+                time.sleep(20)
+                try:
+                    ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
+                except:
+                    break
+        threading.Thread(target=heartbeat, daemon=True).start()
 
     def on_ping(ws, data):
         ws.send(data, websocket.ABNF.OPCODE_PONG)
@@ -69,16 +65,14 @@ def start_bot(config):
         print(f"⚠️ Bot {uid} Error: {err}")
 
     def on_close(ws, a, b):
-        nonlocal reconnect_delay
-        print(f"❌ Bot {uid} disconnected. Reconnecting in {reconnect_delay}s...")
-        time.sleep(reconnect_delay)
-        reconnect_delay = min(reconnect_delay * 2, 60)
+        print(f"❌ Bot {uid} disconnected. Reconnecting in 5s...")
+        time.sleep(5)
         start_bot(config)
 
     ws_url = f"wss://i-875.olaparty.com/ikxd_cproxy?token={uid}"
     headers = {
         "X-Auth-Token": config["auth_token"],
-        "X-DeviceId": device_id,
+        "X-DeviceId": config["device_id"],
         "X-DeviceType": "Google Pixel 4",
         "X-App-Name": "olaparty",
         "X-OsType": "android",
@@ -105,17 +99,20 @@ def start_bot(config):
     ws.run_forever(ping_interval=20, ping_timeout=10)
 
 def start_all_bots():
-    print(f"=== Starting {len(BOTS)} Bots ===")
+    print("=== OlaParty Bots Starting (New Room) ===")
+    if not BOTS:
+        print("⚠️ No bots found. Please add your accounts to accounts.py and restart.")
+        return
     for bot in BOTS:
         thread = threading.Thread(target=start_bot, args=(bot,))
         thread.daemon = True
         thread.start()
-        time.sleep(2)   # Thoda gap
+        time.sleep(2)
 
-# ==================== MAIN ====================
-print("⚡ Starting Flask + Bots...")
+print("⚡ Bot script loaded! Starting Flask + Bots...")
 threading.Thread(target=keep_alive, daemon=True).start()
 threading.Thread(target=start_all_bots, daemon=True).start()
 
+print("🔄 Bot is running. Keeping main thread alive...")
 while True:
     time.sleep(60)
