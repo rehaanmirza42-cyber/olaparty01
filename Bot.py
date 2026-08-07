@@ -2,25 +2,26 @@ import websocket
 import time
 import threading
 import os
+import random
+import string
 from flask import Flask
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "OlaParty 36 Bots are running 24/7 in New Room!"
+    return "OlaParty 49 Bots are running 24/7 in New Room!"
 
 def keep_alive():
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
 
-# ==================== NEW TARGET ROOM ====================
+# ==================== NEW ROOM ====================
 ROOM_ID = "C_1894232843312212416_V2_IN_0_IN"
 ROOM_TOKEN = "Vr-dn2Edht6fLn70BYyBP2i2qKGl6zLU2Yn7KxB7E6VFAnMUpU6EaNya5ZbAmeoD260AU2fXjolq2UPv0pTOfgo8SpSMne4zu_z4ict5LZbdIUlbIoFVoXmLVE-6duCtIj3fVfGxkU4ejHg0GCRls-48k_LP6YHCux5Rex9Z6Jjm72OeCZEBdMR7iEsSWrffDyK_zsQZt5A="
 
 OLD_ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
 OLD_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQk7IcdG1PFM="
-
 
 def replace_room_in_frame(frame_hex):
     clean_hex = frame_hex.replace(" ", "").replace("\n", "")
@@ -32,7 +33,11 @@ def replace_room_in_frame(frame_hex):
     clean_hex = clean_hex.replace(old_token_hex, new_token_hex)
     return bytes.fromhex(clean_hex)
 
-# ==================== BOTS DATA (36 Accounts) ====================
+# ==================== Helper: generate unique device ID ====================
+def generate_device_id():
+    return ''.join(random.choices(string.hexdigits.lower(), k=32))
+
+# ==================== BOTS DATA (49 Accounts) ====================
 BOTS = [
     # ----- ACCOUNT 1 (UID: 4470969373) -----
     {
@@ -286,13 +291,6 @@ BOTS = [
         "device_id": "0f1e2d3c4b5a69780796857463524131",
         "join_frame_hex": """0A 86 01 50 01 18 00 62 1D 0A 06 58 2D 50 63 69 64 12 13 31 31 35 32 39 32 31 35 30 34 36 32 34 37 37 33 32 35 32 22 05 65 6E 5F 69 6E 3A 0D 43 68 61 6E 6E 65 6C 2E 45 6E 74 65 72 48 01 32 20 43 5F 31 39 33 37 37 37 39 36 34 36 31 35 39 31 35 34 35 36 30 5F 56 32 5F 49 4E 5F 30 5F 49 4E 10 EA 9A 94 B4 FD 33 0A 19 6E 65 74 2E 69 68 61 67 6F 2E 63 68 61 6E 6E 65 6C 2E 73 72 76 2E 6D 67 72 42 05 30 2E 30 2E 30 1A E6 04 98 02 00 0A 20 43 5F 31 39 33 37 37 37 39 36 34 36 31 35 39 31 35 34 35 36 30 5F 56 32 5F 49 4E 5F 30 5F 49 4E 72 19 12 02 31 31 1A 07 61 61 72 63 68 36 34 0A 07 50 69 78 65 6C 20 34 28 8F 58 5A 00 AA 02 33 0A 1D 1A 07 61 61 72 63 68 36 34 10 08 28 80 BE 92 01 20 80 C4 77 0A 07 4D 53 4D 4E 49 4C 45 22 06 47 6F 6F 67 6C 65 1A 07 50 69 78 65 6C 20 34 10 8F 58 FA 01 29 0A 00 22 00 52 02 31 32 5A 01 30 62 01 31 12 17 31 37 38 36 30 31 30 34 37 31 37 35 38 31 35 30 37 32 34 36 38 32 31 1A 00 8A 02 06 08 00 18 00 10 00 A0 02 00 52 00 F0 01 00 1A 86 02 DA 02 01 31 9A 07 01 31 32 01 31 E8 07 00 5A 03 0A 01 31 B8 06 01 60 00 90 02 01 0A 01 31 FA 03 01 31 90 05 00 F2 03 01 31 C0 07 00 C8 07 00 D0 07 00 50 01 18 01 C8 02 00 90 03 01 F8 01 01 C0 06 01 98 02 81 A0 04 F0 06 01 A8 06 00 EA 06 01 31 8A 05 06 12 01 31 0A 01 31 AA 08 01 31 E0 03 01 A0 01 01 B8 08 01 A8 05 01 C8 08 00 C0 08 01 80 02 01 A0 05 01 82 04 01 31 EA 03 01 31 B0 04 01 98 05 01 2A 01 31 A8 07 00 98 03 00 D8 08 01 A8 01 01 20 01 B8 04 01 98 08 00 B2 01 01 31 90 08 00 12 01 31 A0 04 01 90 04 00 88 04 01 B0 06 01 DA 06 01 31 D0 06 01 B0 08 00 C8 06 01 F8 06 00 82 05 01 31 F0 01 01 D2 02 33 98 02 00 90 03 00 A8 01 00 80 02 00 80 05 00 A8 05 00 90 02 00 D8 03 00 98 03 00 F8 01 00 B0 01 00 E8 01 00 A0 01 00 0A 01 31 88 02 00 E0 01 00 D8 01 00 68 00 E0 02 01 88 02 01 10 3B 82 01 9F 01 18 00 40 00 12 3A F0 9F 96 A4 E2 8E AF EA AF AD CC BD E0 BC 8D E2 83 AA E2 83 95 F0 9F 86 81 F0 9D 90 9E F0 9D 90 A1 F0 9D 90 9A F0 9D 90 A7 E2 8E AF EA AF AD CC BD EA AD 97 CC BD CC A5 32 39 30 00 20 01 28 00 0A 57 68 74 74 70 73 3A 2F 2F 6F 2D 69 6E 2E 6F 6C 61 70 61 72 74 79 2E 63 6F 6D 2F 62 6C 6F 62 2F 76 32 2F 61 6C 69 2F 69 6E 2F 30 2F 31 2F 6E 73 2F 32 31 73 6F 69 36 6C 2F 75 75 72 6C 2F 34 34 36 32 32 30 33 34 30 35 5F 31 37 36 34 31 34 32 39 33 38 2E 6A 70 65 67 90 02 00 10 00"""
     },
-    # ----- ACCOUNT 36 (UID: 4462203405) -----
-    {
-        "uid": "4462203405",
-        "auth_token": "k5rCYaZCElWXejl6wNeshmfbatBM%2Fnw2E0z6pOhAezHsvb2YDA0opD7ULlmrT0Bp%2CnNM9ovMxw6%2FsHs6UzMyJkVVeyanTBH00qInmDbDVQWHIgMZ7fn9nbQDOZJn2iQjq%2FtvzUPpvw%2FOC%2BnhOZwhEp1K%2B5H3lAAdWiE%2B%2BR9eG8lyNd1fPIq5joxch%2B%2FVQo4VvJHc3eI5EdMBJf7V5Wa8OKIomRajjXJhHs4MHG7X0MT122XPZqnRKUFDT1BSpXK5BrrMbryLkDKcfVHdcBBfEY9y8OrM%2BPV5RBtkaaSsDz90dEUMaADd2VlWcwm%2BT6%2B0DFAYkWfqzUKme3eneYGgKytPemmhjis47%2Bl%2F2R9OclnIEoxAWTi1yf4jIw7w9cuxZ7y3%2BZ2zmOkRKrxOTX0VibuPwmYpuHzat2A60AMgB%2B4yLBDHmb0pgRnxHxi%2FWYaEHKAJUKnH6VmdmxYs47LId%2FXQsolUYDnksK4sKczOmUA4goKPHzLvZZ3lseTgPeGK0EbsyZ%2F17W5EJsqdIpm2t9YG5AK1C%2BT6arSD%2FTEjhN%2FhicHcU1aXBYzrAJVjozPuU",
-        "device_id": "0f1e2d3c4b5a69780796857463524131",
-        "join_frame_hex": """0A 86 01 50 01 18 00 62 1D 0A 06 58 2D 50 63 69 64 12 13 31 31 35 32 39 32 31 35 30 34 36 32 34 37 37 33 32 35 32 22 05 65 6E 5F 69 6E 3A 0D 43 68 61 6E 6E 65 6C 2E 45 6E 74 65 72 48 01 32 20 43 5F 31 39 33 37 37 37 39 36 34 36 31 35 39 31 35 34 35 36 30 5F 56 32 5F 49 4E 5F 30 5F 49 4E 10 EA 9A 94 B4 FD 33 0A 19 6E 65 74 2E 69 68 61 67 6F 2E 63 68 61 6E 6E 65 6C 2E 73 72 76 2E 6D 67 72 42 05 30 2E 30 2E 30 1A E6 04 98 02 00 0A 20 43 5F 31 39 33 37 37 37 39 36 34 36 31 35 39 31 35 34 35 36 30 5F 56 32 5F 49 4E 5F 30 5F 49 4E 72 19 12 02 31 31 1A 07 61 61 72 63 68 36 34 0A 07 50 69 78 65 6C 20 34 28 8F 58 5A 00 AA 02 33 0A 1D 1A 07 61 61 72 63 68 36 34 10 08 28 80 BE 92 01 20 80 C4 77 0A 07 4D 53 4D 4E 49 4C 45 22 06 47 6F 6F 67 6C 65 1A 07 50 69 78 65 6C 20 34 10 8F 58 FA 01 29 0A 00 22 00 52 02 31 32 5A 01 30 62 01 31 12 17 31 37 38 36 30 31 30 34 37 31 37 35 38 31 35 30 37 32 34 36 38 32 31 1A 00 8A 02 06 08 00 18 00 10 00 A0 02 00 52 00 F0 01 00 1A 86 02 DA 02 01 31 9A 07 01 31 32 01 31 E8 07 00 5A 03 0A 01 31 B8 06 01 60 00 90 02 01 0A 01 31 FA 03 01 31 90 05 00 F2 03 01 31 C0 07 00 C8 07 00 D0 07 00 50 01 18 01 C8 02 00 90 03 01 F8 01 01 C0 06 01 98 02 81 A0 04 F0 06 01 A8 06 00 EA 06 01 31 8A 05 06 12 01 31 0A 01 31 AA 08 01 31 E0 03 01 A0 01 01 B8 08 01 A8 05 01 C8 08 00 C0 08 01 80 02 01 A0 05 01 82 04 01 31 EA 03 01 31 B0 04 01 98 05 01 2A 01 31 A8 07 00 98 03 00 D8 08 01 A8 01 01 20 01 B8 04 01 98 08 00 B2 01 01 31 90 08 00 12 01 31 A0 04 01 90 04 00 88 04 01 B0 06 01 DA 06 01 31 D0 06 01 B0 08 00 C8 06 01 F8 06 00 82 05 01 31 F0 01 01 D2 02 33 98 02 00 90 03 00 A8 01 00 80 02 00 80 05 00 A8 05 00 90 02 00 D8 03 00 98 03 00 F8 01 00 B0 01 00 E8 01 00 A0 01 00 0A 01 31 88 02 00 E0 01 00 D8 01 00 68 00 E0 02 01 88 02 01 10 3B 82 01 9F 01 18 00 40 00 12 3A F0 9F 96 A4 E2 8E AF EA AF AD CC BD E0 BC 8D E2 83 AA E2 83 95 F0 9F 86 81 F0 9D 90 9E F0 9D 90 A1 F0 9D 90 9A F0 9D 90 A7 E2 8E AF EA AF AD CC BD EA AD 97 CC BD CC A5 32 39 30 00 20 01 28 00 0A 57 68 74 74 70 73 3A 2F 2F 6F 2D 69 6E 2E 6F 6C 61 70 61 72 74 79 2E 63 6F 6D 2F 62 6C 6F 62 2F 76 32 2F 61 6C 69 2F 69 6E 2F 30 2F 31 2F 6E 73 2F 32 31 73 6F 69 36 6C 2F 75 75 72 6C 2F 34 34 36 32 32 30 33 34 30 35 5F 31 37 36 34 31 34 32 39 33 38 2E 6A 70 65 67 90 02 00 10 00"""
-    },
     # ----- ACCOUNT 37 (UID: 4462243018) -----
     {
         "uid": "4462243018",
@@ -386,24 +384,33 @@ BOTS = [
     }
 ]
 
-# ==================== HEARTBEAT ====================
+# ==================== FIX: Unique device IDs for each bot ====================
+used_device_ids = set()
+for bot in BOTS:
+    dev = bot.get("device_id", "")
+    # If device_id is missing, duplicate, or the common one, generate new
+    if not dev or dev in used_device_ids or dev == "76b6e7b1b202c790cac80dc34d678cd3":
+        new_dev = generate_device_id()
+        while new_dev in used_device_ids:
+            new_dev = generate_device_id()
+        bot["device_id"] = new_dev
+    used_device_ids.add(bot["device_id"])
+
+# ==================== START BOT (Fixed) ====================
 def start_bot(config):
     uid = config["uid"]
+    device_id = config["device_id"]
     join_frame_bytes = replace_room_in_frame(config["join_frame_hex"])
 
-    def on_open(ws):
-        print(f"✅ Bot {uid} connected with device {config['device_id']}.")
-        ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
-        print(f"🚀 Bot {uid} sent Channel.Enter for new room.")
+    reconnect_delay = 2  # exponential backoff
 
-        def heartbeat():
-            while True:
-                time.sleep(20)
-                try:
-                    ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
-                except:
-                    break
-        threading.Thread(target=heartbeat, daemon=True).start()
+    def on_open(ws):
+        print(f"✅ Bot {uid} connected (device: {device_id})")
+        try:
+            ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
+            print(f"🚀 Bot {uid} sent Channel.Enter")
+        except Exception as e:
+            print(f"⚠️ Bot {uid} send error: {e}")
 
     def on_ping(ws, data):
         ws.send(data, websocket.ABNF.OPCODE_PONG)
@@ -412,14 +419,16 @@ def start_bot(config):
         print(f"⚠️ Bot {uid} Error: {err}")
 
     def on_close(ws, a, b):
-        print(f"❌ Bot {uid} disconnected. Reconnecting in 5s...")
-        time.sleep(5)
+        nonlocal reconnect_delay
+        print(f"❌ Bot {uid} disconnected. Reconnecting in {reconnect_delay}s...")
+        time.sleep(reconnect_delay)
+        reconnect_delay = min(reconnect_delay * 2, 60)
         start_bot(config)
 
     ws_url = f"wss://i-875.olaparty.com/ikxd_cproxy?token={uid}"
     headers = {
         "X-Auth-Token": config["auth_token"],
-        "X-DeviceId": config["device_id"],
+        "X-DeviceId": device_id,
         "X-DeviceType": "Google Pixel 4",
         "X-App-Name": "olaparty",
         "X-OsType": "android",
@@ -445,14 +454,13 @@ def start_bot(config):
                                 on_ping=on_ping, on_error=on_error, on_close=on_close)
     ws.run_forever(ping_interval=20, ping_timeout=10)
 
-# ==================== START ALL BOTS ====================
 def start_all_bots():
     print("=== OlaParty 49 Bots Starting (New Room) ===")
-    for bot in BOTS:
+    for idx, bot in enumerate(BOTS):
         thread = threading.Thread(target=start_bot, args=(bot,))
         thread.daemon = True
         thread.start()
-        time.sleep(2)
+        time.sleep(3)  # stagger startup
 
 print("⚡ Bot script loaded! Starting Flask + Bots...")
 threading.Thread(target=keep_alive, daemon=True).start()
