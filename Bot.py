@@ -1,5 +1,4 @@
-# bot.py – Render.com optimized version
-# Auto-generates online frame from template
+# bot.py – Render.com compatible with auto online frame generation
 
 import websocket
 import time
@@ -23,14 +22,14 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "OlaParty Bot Running! 10 Accounts Active ✅"
+    return "✅ OlaParty Bot is Running! 10 accounts active."
 
 @app.route('/health')
 def health():
     return "OK", 200
 
 def keep_alive():
-    port = int(os.environ.get('PORT', 8081))
+    port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
 
 # ========== ONLINE FRAME TEMPLATE ==========
@@ -47,7 +46,6 @@ def build_online_frame(uid):
 
 # ========== LOGGING ==========
 os.makedirs("logs", exist_ok=True)
-
 def log_message(uid, msg):
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     line = f"[{ts}] {msg}\n"
@@ -55,6 +53,7 @@ def log_message(uid, msg):
     with open(f"logs/{uid}.txt", "a", encoding="utf-8") as f:
         f.write(line)
 
+# ========== DEVICE ID GENERATOR ==========
 def generate_device_id():
     return ''.join(random.choices(string.hexdigits.lower(), k=32))
 
@@ -76,7 +75,7 @@ def start_bot(account):
 
     def on_open(ws):
         print(f"✅ [{uid}] Connected!")
-        log_message(uid, "Connected")
+        log_message(uid, f"Connected to OlaParty")
         try:
             ws.send(join_frame, websocket.ABNF.OPCODE_BINARY)
             print(f"🚀 [{uid}] Sent join frame")
@@ -173,14 +172,15 @@ def run_all():
         threading.Thread(target=start_bot, args=(acc,), daemon=True).start()
         time.sleep(3)
 
+# ========== MAIN ==========
 if __name__ == '__main__':
-    print("⚡ Starting bot on Render...")
-    # Start Flask in background
+    print("⚡ Render Flask server starting...")
+    # Flask server ko background thread mein chalao
     threading.Thread(target=keep_alive, daemon=True).start()
     time.sleep(2)
-    # Start all bots
+    # Bots start karo
     run_all()
-    print("🔄 Bot is running. Press Ctrl+C to stop.")
-    # Keep the main thread alive
+    print("🔄 All bots running. Press Ctrl+C to stop.")
+    # Flask ko alive rakhne ke liye infinite loop
     while True:
         time.sleep(60)
