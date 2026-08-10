@@ -1,81 +1,133 @@
+# bot.py – Render.com optimized version
+# Auto-generates online frame from template
+
 import websocket
 import time
 import threading
 import os
-from flask import Flask
 import sys
+import random
+import string
+from flask import Flask
+from datetime import datetime
 
-# Try to import accounts from accounts.py
+# ========== ACCOUNTS ==========
 try:
-    from accounts import BOTS
+    from accounts import ACCOUNTS
 except ImportError:
-    BOTS = []
-    print("⚠️ accounts.py not found. Please create it with your BOTS list.")
+    print("❌ accounts.py nahi mila!")
+    sys.exit(1)
 
+# ========== FLASK ==========
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "OlaParty Bots are running 24/7!"
+    return "OlaParty Bot Running! 10 Accounts Active ✅"
+
+@app.route('/health')
+def health():
+    return "OK", 200
 
 def keep_alive():
-    port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get('PORT', 8081))
+    app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
 
-# ==================== TARGET ROOM ====================
-ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
-ROOM_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQk7IcdG1PFM="
+# ========== ONLINE FRAME TEMPLATE ==========
+ONLINE_FRAME_TEMPLATE_HEX = "0A29500118002205656E5F696E3A00480032001098EEE7D7FE330A0D696B78645F6F6E6C696E655F6442002A04180110001003"
 
-OLD_ROOM_ID = "C_1894232843312212416_V2_IN_0_IN"
-OLD_TOKEN = "Vr-dn2Edht6fLn70BYyBP2i2qKGl6zLU2Yn7KxB7E6VFAnMUpU6EaNya5ZbAmeoD260AU2fXjolq2UPv0pTOfgo8SpSMne4zu_z4ict5LZbdIUlbIoFVoXmLVE-6duCtIj3fVfGxkU4ejHg0GCRls-48k_LP6YHCux5Rex9Z6Jjm72OeCZEBdMR7iEsSWrffDyK_zsQZt5A="
+def build_online_frame(uid):
+    clean_hex = ONLINE_FRAME_TEMPLATE_HEX.replace(" ", "").replace("\n", "")
+    frame_bytes = bytes.fromhex(clean_hex)
+    old_uid = b"1786255293228560621211"
+    new_uid = str(uid).encode('utf-8')
+    frame_str = frame_bytes.decode('latin-1')
+    frame_str = frame_str.replace(old_uid.decode('ascii'), new_uid.decode('ascii'))
+    return frame_str.encode('latin-1')
 
-OLD_ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
-OLD_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQk7IcdG1PFM="
+# ========== LOGGING ==========
+os.makedirs("logs", exist_ok=True)
 
-def replace_room_in_frame(frame_hex):
-    clean_hex = frame_hex.replace(" ", "").replace("\n", "")
-    old_room_hex = OLD_ROOM_ID.encode('utf-8').hex().upper()
-    new_room_hex = ROOM_ID.encode('utf-8').hex().upper()
-    clean_hex = clean_hex.replace(old_room_hex, new_room_hex)
-    old_token_hex = OLD_TOKEN.encode('utf-8').hex().upper()
-    new_token_hex = ROOM_TOKEN.encode('utf-8').hex().upper()
-    clean_hex = clean_hex.replace(old_token_hex, new_token_hex)
-    return bytes.fromhex(clean_hex)
+def log_message(uid, msg):
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    line = f"[{ts}] {msg}\n"
+    print(f"📩 [{uid}] {msg[:200]}...")
+    with open(f"logs/{uid}.txt", "a", encoding="utf-8") as f:
+        f.write(line)
 
-# ==================== HEARTBEAT ====================
-def start_bot(config):
-    uid = config["uid"]
-    join_frame_bytes = replace_room_in_frame(config["join_frame_hex"])
+def generate_device_id():
+    return ''.join(random.choices(string.hexdigits.lower(), k=32))
+
+# ========== BOT ==========
+def start_bot(account):
+    uid = account["uid"]
+    auth_token = account["auth_token"]
+    join_hex = account["join_frame_hex"]
+
+    try:
+        join_frame = bytes.fromhex(join_hex.replace(" ", "").replace("\n", ""))
+        online_frame = build_online_frame(uid)
+    except Exception as e:
+        print(f"⚠️ [{uid}] Frame decode error: {e}")
+        return
+
+    device_id = generate_device_id()
+    print(f"🔑 [{uid}] Device ID: {device_id}")
 
     def on_open(ws):
-        print(f"✅ Bot {uid} connected with device {config['device_id']}.")
-        ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
-        print(f"🚀 Bot {uid} sent Channel.Enter for new room.")
+        print(f"✅ [{uid}] Connected!")
+        log_message(uid, "Connected")
+        try:
+            ws.send(join_frame, websocket.ABNF.OPCODE_BINARY)
+            print(f"🚀 [{uid}] Sent join frame")
+            log_message(uid, "Sent join frame")
+            time.sleep(0.5)
+            ws.send(online_frame, websocket.ABNF.OPCODE_BINARY)
+            print(f"🟢 [{uid}] Sent online presence")
+            log_message(uid, "Sent online presence")
+        except Exception as e:
+            print(f"⚠️ [{uid}] Send error: {e}")
+            log_message(uid, f"Send error: {e}")
 
         def heartbeat():
             while True:
                 time.sleep(20)
                 try:
-                    ws.send(join_frame_bytes, websocket.ABNF.OPCODE_BINARY)
+                    ws.send(join_frame, websocket.ABNF.OPCODE_BINARY)
+                    ws.send(online_frame, websocket.ABNF.OPCODE_BINARY)
                 except:
                     break
         threading.Thread(target=heartbeat, daemon=True).start()
 
+    def on_message(ws, msg):
+        try:
+            if isinstance(msg, bytes):
+                log_message(uid, f"BINARY: {msg.hex()[:300]}...")
+            else:
+                log_message(uid, f"TEXT: {msg}")
+        except Exception as e:
+            log_message(uid, f"Msg parse error: {e}")
+
     def on_ping(ws, data):
-        ws.send(data, websocket.ABNF.OPCODE_PONG)
+        try:
+            ws.send(data, websocket.ABNF.OPCODE_PONG)
+        except:
+            pass
 
     def on_error(ws, err):
-        print(f"⚠️ Bot {uid} Error: {err}")
+        print(f"⚠️ [{uid}] Error: {err}")
+        log_message(uid, f"Error: {err}")
 
     def on_close(ws, a, b):
-        print(f"❌ Bot {uid} disconnected. Reconnecting in 5s...")
+        print(f"❌ [{uid}] Disconnected. Reconnecting in 5s...")
+        log_message(uid, "Disconnected, reconnecting...")
         time.sleep(5)
-        start_bot(config)
+        start_bot(account)
 
-    ws_url = f"wss://i-875.olaparty.com/ikxd_cproxy?token={uid}"
+    ws_url = "wss://i-875.olaparty.com/ikxd_cproxy"
     headers = {
-        "X-Auth-Token": config["auth_token"],
-        "X-DeviceId": config["device_id"],
+        "X-Auth-Token": auth_token,
+        "X-DeviceId": device_id,
         "X-DeviceType": "Google Pixel 4",
         "X-App-Name": "olaparty",
         "X-OsType": "android",
@@ -91,31 +143,44 @@ def start_bot(config):
         "X-App-Ver": "52303",
         "X-App-Real-Ver": "52303",
         "X-Os-Ver": "11",
-        "X-Pcid": "1152921504624773252",
+        "X-Pcid": f"115292150462477{uid[-4:]}",
         "X-Request-WsId": str(int(time.time()*1000)),
         "X-Last-Seqid": "0",
-        "Origin": "wss://i-875.olaparty.com",
+        "Origin": "https://i-875.olaparty.com",
         "User-Agent": "com.live.party/3185 (Linux; U; Android 11; en_IN; Pixel 4; Build/RD2A.211001.002; Cronet/93.0.4533.0)"
     }
-    ws = websocket.WebSocketApp(ws_url, header=headers, on_open=on_open,
-                                on_ping=on_ping, on_error=on_error, on_close=on_close)
-    ws.run_forever(ping_interval=20, ping_timeout=10)
+    
+    try:
+        ws = websocket.WebSocketApp(ws_url, header=headers, on_open=on_open,
+                                    on_message=on_message, on_ping=on_ping,
+                                    on_error=on_error, on_close=on_close)
+        ws.run_forever(ping_interval=20, ping_timeout=10)
+    except Exception as e:
+        print(f"⚠️ [{uid}] Connection exception: {e}")
+        log_message(uid, f"Connection exception: {e}")
+        time.sleep(5)
+        start_bot(account)
 
-def start_all_bots():
-    print("=== OlaParty Bots Starting (New Room) ===")
-    if not BOTS:
-        print("⚠️ No bots found. Please add your accounts to accounts.py and restart.")
+# ========== RUN ==========
+def run_all():
+    if not ACCOUNTS:
+        print("❌ No accounts!")
         return
-    for bot in BOTS:
-        thread = threading.Thread(target=start_bot, args=(bot,))
-        thread.daemon = True
-        thread.start()
-        time.sleep(2)
+    print(f"🤖 {len(ACCOUNTS)} accounts load hue.")
+    for idx, acc in enumerate(ACCOUNTS, 1):
+        uid = acc['uid']
+        print(f"🔄 Account {idx} (UID: {uid}) start...")
+        threading.Thread(target=start_bot, args=(acc,), daemon=True).start()
+        time.sleep(3)
 
-print("⚡ Bot script loaded! Starting Flask + Bots...")
-threading.Thread(target=keep_alive, daemon=True).start()
-threading.Thread(target=start_all_bots, daemon=True).start()
-
-print("🔄 Bot is running. Keeping main thread alive...")
-while True:
-    time.sleep(60)
+if __name__ == '__main__':
+    print("⚡ Starting bot on Render...")
+    # Start Flask in background
+    threading.Thread(target=keep_alive, daemon=True).start()
+    time.sleep(2)
+    # Start all bots
+    run_all()
+    print("🔄 Bot is running. Press Ctrl+C to stop.")
+    # Keep the main thread alive
+    while True:
+        time.sleep(60)
