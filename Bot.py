@@ -1,3 +1,5 @@
+# bot.py – New Room Default
+
 import websocket
 import time
 import threading
@@ -30,10 +32,11 @@ def keep_alive():
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
 
-# ========== DEFAULT ROOM (Updated) ==========
+# ========== NEW ROOM (DEFAULT) ==========
 DEFAULT_ROOM_ID = "C_2088234260711592833_V2_IN_0_IN"
 DEFAULT_ROOM_TOKEN = "6h4hfdCt_nMmZaFzZWVaUMtatVk9o8wX3URZ-XNYjKpOPpiEU4MxwDvR9q4YXL0zyEvADeZwLDIc6ga-9SGeqHYE1eeUSboB2EBa4PXJNVDOwev5-UisnIO5L0bYeOLHbrDIEmxisKrwG6Q5hmBM8v-o-JJ5uBElvJRui_ZLbpr_ixwP4YSlwy4BcwD1tbe8PBXT7Uf1vTg="
 
+# Ye OLD_ROOM_ID aur OLD_TOKEN replace karne ke liye use honge
 OLD_ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
 OLD_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQ7IcdG1PFM="
 
@@ -97,7 +100,7 @@ def start_bot(account, room_id, room_token):
             ws.send(join_frame, websocket.ABNF.OPCODE_BINARY)
             print(f"🚀 [{uid}] Sent join frame to {room_id}")
             log_message(uid, f"Sent join frame to {room_id}")
-            time.sleep(0.5)
+            time.sleep(0.15)
             ws.send(online_frame, websocket.ABNF.OPCODE_BINARY)
             print(f"🟢 [{uid}] Sent online presence")
             log_message(uid, "Sent online presence")
@@ -183,9 +186,32 @@ if __name__ == '__main__':
     print("🤖 OlaParty Bot Launcher")
     print("="*50)
     
-    room_id = DEFAULT_ROOM_ID
-    room_token = DEFAULT_ROOM_TOKEN
-    bot_count = len(ACCOUNTS)
+    # New Room ID as default
+    prompt_room = f"Enter Room ID (default: {DEFAULT_ROOM_ID[:30]}...): "
+    room_id = input(prompt_room).strip()
+    if not room_id:
+        room_id = DEFAULT_ROOM_ID
+        print(f"✅ Using new Room ID: {room_id}")
+    
+    # New Room Token as default
+    prompt_token = f"Enter Room Token (press Enter for default): "
+    token_input = input(prompt_token).strip()
+    if not token_input:
+        room_token = DEFAULT_ROOM_TOKEN
+        print(f"✅ Using new Room Token")
+    else:
+        room_token = token_input
+    
+    # Bot count
+    print(f"\n📊 Total accounts available: {len(ACCOUNTS)}")
+    try:
+        bot_count = int(input(f"Enter number of bots to send (1-{len(ACCOUNTS)}): ").strip())
+        if bot_count < 1 or bot_count > len(ACCOUNTS):
+            print(f"❌ Please enter a number between 1 and {len(ACCOUNTS)}")
+            sys.exit(1)
+    except ValueError:
+        print("❌ Invalid number!")
+        sys.exit(1)
 
     selected_accounts = ACCOUNTS[:bot_count]
     print(f"\n✅ {bot_count} bots will be started with Room: {room_id}")
@@ -196,14 +222,15 @@ if __name__ == '__main__':
     threading.Thread(target=keep_alive, daemon=True).start()
     time.sleep(2)
 
-    # ========== START BOTS (Speed Increased) ==========
+    # ========== START BOTS ==========
     for idx, acc in enumerate(selected_accounts, 1):
         uid = acc['uid']
         print(f"🔄 Bot {idx} (UID: {uid}) starting...")
         threading.Thread(target=start_bot, args=(acc, room_id, room_token), daemon=True).start()
-        time.sleep(0.2)
+        time.sleep(3)
 
-    print("\n✅ All bots are running continuously.")
+    print("\n✅ All bots are running. Press Ctrl+C to stop.")
+    print("📁 Logs are saved in 'logs/' folder.\n")
     
     while True:
         time.sleep(60)
