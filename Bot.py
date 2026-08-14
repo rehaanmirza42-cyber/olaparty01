@@ -97,7 +97,7 @@ def start_bot(account, room_id, room_token):
             ws.send(join_frame, websocket.ABNF.OPCODE_BINARY)
             print(f"🚀 [{uid}] Sent join frame to {room_id}")
             log_message(uid, f"Sent join frame to {room_id}")
-            time.sleep(0.2)
+            time.sleep(0.5)
             ws.send(online_frame, websocket.ABNF.OPCODE_BINARY)
             print(f"🟢 [{uid}] Sent online presence")
             log_message(uid, "Sent online presence")
@@ -107,7 +107,7 @@ def start_bot(account, room_id, room_token):
 
         def heartbeat():
             while True:
-                time.sleep(15)  # Stability ke liye 15s heartbeat
+                time.sleep(20)
                 try:
                     ws.send(join_frame, websocket.ABNF.OPCODE_BINARY)
                     ws.send(online_frame, websocket.ABNF.OPCODE_BINARY)
@@ -185,12 +185,10 @@ if __name__ == '__main__':
     
     room_id = DEFAULT_ROOM_ID
     room_token = DEFAULT_ROOM_TOKEN
-    
-    # Pehle ki tarah saare accounts ki limit automatically load hogi
     bot_count = len(ACCOUNTS)
+
     selected_accounts = ACCOUNTS[:bot_count]
-    
-    print(f"\n✅ Total {bot_count} bots will be started with Room: {room_id}")
+    print(f"\n✅ {bot_count} bots will be started with Room: {room_id}")
     print("="*50 + "\n")
 
     # ========== START FLASK ==========
@@ -198,12 +196,12 @@ if __name__ == '__main__':
     threading.Thread(target=keep_alive, daemon=True).start()
     time.sleep(2)
 
-    # ========== START BOTS (Fast Speed & Full Limit) ==========
+    # ========== START BOTS ==========
     for idx, acc in enumerate(selected_accounts, 1):
         uid = acc['uid']
         print(f"🔄 Bot {idx} (UID: {uid}) starting...")
         threading.Thread(target=start_bot, args=(acc, room_id, room_token), daemon=True).start()
-        time.sleep(0.5)  # Fast entry speed (0.5 second gap)
+        time.sleep(3)
 
     print("\n✅ All bots are running continuously.")
     
