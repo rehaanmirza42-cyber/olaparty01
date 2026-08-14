@@ -1,5 +1,3 @@
-# bot.py – Render.com compatible with auto online frame generation
-
 import websocket
 import time
 import threading
@@ -17,12 +15,12 @@ except ImportError:
     print("❌ accounts.py nahi mila!")
     sys.exit(1)
 
-# ========== FLASK ==========
+# ========== FLASK (Render/Heroku ke liye) ==========
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "✅ OlaParty Bot is Running! 10 accounts active."
+    return "✅ OlaParty Bot is Running!"
 
 @app.route('/health')
 def health():
@@ -31,6 +29,13 @@ def health():
 def keep_alive():
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+
+# ========== DEFAULT ROOM ==========
+DEFAULT_ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
+DEFAULT_ROOM_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQ7IcdG1PFM="
+
+OLD_ROOM_ID = DEFAULT_ROOM_ID
+OLD_TOKEN = DEFAULT_ROOM_TOKEN
 
 # ========== ONLINE FRAME TEMPLATE ==========
 ONLINE_FRAME_TEMPLATE_HEX = "0A29500118002205656E5F696E3A00480032001098EEE7D7FE330A0D696B78645F6F6E6C696E655F6442002A04180110001003"
@@ -57,14 +62,26 @@ def log_message(uid, msg):
 def generate_device_id():
     return ''.join(random.choices(string.hexdigits.lower(), k=32))
 
+# ========== REPLACE ROOM IN JOIN FRAME ==========
+def replace_room_in_join_frame(join_hex, new_room_id, new_token):
+    old_room_hex = OLD_ROOM_ID.encode('utf-8').hex().upper()
+    new_room_hex = new_room_id.encode('utf-8').hex().upper()
+    old_token_hex = OLD_TOKEN.encode('utf-8').hex().upper()
+    new_token_hex = new_token.encode('utf-8').hex().upper()
+    
+    clean_hex = join_hex.replace(" ", "").replace("\n", "")
+    clean_hex = clean_hex.replace(old_room_hex, new_room_hex)
+    clean_hex = clean_hex.replace(old_token_hex, new_token_hex)
+    return bytes.fromhex(clean_hex)
+
 # ========== BOT ==========
-def start_bot(account):
+def start_bot(account, room_id, room_token):
     uid = account["uid"]
     auth_token = account["auth_token"]
     join_hex = account["join_frame_hex"]
 
     try:
-        join_frame = bytes.fromhex(join_hex.replace(" ", "").replace("\n", ""))
+        join_frame = replace_room_in_join_frame(join_hex, room_id, room_token)
         online_frame = build_online_frame(uid)
     except Exception as e:
         print(f"⚠️ [{uid}] Frame decode error: {e}")
@@ -75,11 +92,11 @@ def start_bot(account):
 
     def on_open(ws):
         print(f"✅ [{uid}] Connected!")
-        log_message(uid, f"Connected to OlaParty")
+        log_message(uid, f"Connected to room: {room_id}")
         try:
             ws.send(join_frame, websocket.ABNF.OPCODE_BINARY)
-            print(f"🚀 [{uid}] Sent join frame")
-            log_message(uid, "Sent join frame")
+            print(f"🚀 [{uid}] Sent join frame to {room_id}")
+            log_message(uid, f"Sent join frame to {room_id}")
             time.sleep(0.5)
             ws.send(online_frame, websocket.ABNF.OPCODE_BINARY)
             print(f"🟢 [{uid}] Sent online presence")
@@ -121,7 +138,7 @@ def start_bot(account):
         print(f"❌ [{uid}] Disconnected. Reconnecting in 5s...")
         log_message(uid, "Disconnected, reconnecting...")
         time.sleep(5)
-        start_bot(account)
+        start_bot(account, room_id, room_token)
 
     ws_url = "wss://i-875.olaparty.com/ikxd_cproxy"
     headers = {
@@ -158,29 +175,35 @@ def start_bot(account):
         print(f"⚠️ [{uid}] Connection exception: {e}")
         log_message(uid, f"Connection exception: {e}")
         time.sleep(5)
-        start_bot(account)
-
-# ========== RUN ==========
-def run_all():
-    if not ACCOUNTS:
-        print("❌ No accounts!")
-        return
-    print(f"🤖 {len(ACCOUNTS)} accounts load hue.")
-    for idx, acc in enumerate(ACCOUNTS, 1):
-        uid = acc['uid']
-        print(f"🔄 Account {idx} (UID: {uid}) start...")
-        threading.Thread(target=start_bot, args=(acc,), daemon=True).start()
-        time.sleep(3)
+        start_bot(account, room_id, room_token)
 
 # ========== MAIN ==========
 if __name__ == '__main__':
-    print("⚡ Render Flask server starting...")
-    # Flask server ko background thread mein chalao
+    print("\n" + "="*50)
+    print("🤖 OlaParty Bot Launcher")
+    print("="*50)
+    
+    room_id = DEFAULT_ROOM_ID
+    room_token = DEFAULT_ROOM_TOKEN
+    bot_count = len(ACCOUNTS)
+
+    selected_accounts = ACCOUNTS[:bot_count]
+    print(f"\n✅ {bot_count} bots will be started with Room: {room_id}")
+    print("="*50 + "\n")
+
+    # ========== START FLASK ==========
+    print("⚡ Starting Flask server...")
     threading.Thread(target=keep_alive, daemon=True).start()
     time.sleep(2)
-    # Bots start karo
-    run_all()
-    print("🔄 All bots running. Press Ctrl+C to stop.")
-    # Flask ko alive rakhne ke liye infinite loop
+
+    # ========== START BOTS ==========
+    for idx, acc in enumerate(selected_accounts, 1):
+        uid = acc['uid']
+        print(f"🔄 Bot {idx} (UID: {uid}) starting...")
+        threading.Thread(target=start_bot, args=(acc, room_id, room_token), daemon=True).start()
+        time.sleep(3)
+
+    print("\n✅ All bots are running continuously.")
+    
     while True:
         time.sleep(60)
