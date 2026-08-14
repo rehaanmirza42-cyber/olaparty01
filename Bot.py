@@ -196,12 +196,12 @@ if __name__ == '__main__':
     threading.Thread(target=keep_alive, daemon=True).start()
     time.sleep(2)
 
-    # ========== START BOTS ==========
+    # ========== START BOTS (Speed Increased) ==========
     for idx, acc in enumerate(selected_accounts, 1):
         uid = acc['uid']
         print(f"🔄 Bot {idx} (UID: {uid}) starting...")
         threading.Thread(target=start_bot, args=(acc, room_id, room_token), daemon=True).start()
-        time.sleep(3)
+        time.sleep(0.2)
 
     print("\n✅ All bots are running continuously.")
     
