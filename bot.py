@@ -1,3 +1,5 @@
+# bot.py – Multi-account bot with input for Room ID, Token, and Bot Count
+
 import websocket
 import time
 import threading
@@ -30,10 +32,11 @@ def keep_alive():
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
 
-# ========== DEFAULT ROOM ==========
+# ========== DEFAULT ROOM (jo frame mein hardcoded hai) ==========
 DEFAULT_ROOM_ID = "C_1937779646159154560_V2_IN_0_IN"
 DEFAULT_ROOM_TOKEN = "3-WXhsVKUilvhMCCIRWAqs5VRsgs_uJjk3sOVLtZ5EWr0NiGxZmLkf-SrsB3rot05VQJolfQ1cqp4ga5eEIc3RfKLJxDOyEppahp8nvYX-OHfNJnLATAFIrRWz39i7T-5cwhDp0cAxcFYPNGHOYceBfNQEKpyTeIV2gZOB5YDPH_5LPzNgNiFaAfCox8Q8KfQ7IcdG1PFM="
 
+# Ye OLD_ROOM_ID aur OLD_TOKEN replace karne ke liye use honge
 OLD_ROOM_ID = DEFAULT_ROOM_ID
 OLD_TOKEN = DEFAULT_ROOM_TOKEN
 
@@ -177,21 +180,29 @@ def start_bot(account, room_id, room_token):
         time.sleep(5)
         start_bot(account, room_id, room_token)
 
-# ========== MAIN ==========
+# ========== MAIN (Render Environment Compatible) ==========
 if __name__ == '__main__':
     print("\n" + "="*50)
-    print("🤖 OlaParty Bot Launcher")
+    print("🤖 OlaParty Bot Launcher (Render Mode)")
     print("="*50)
     
-    room_id = DEFAULT_ROOM_ID
-    room_token = DEFAULT_ROOM_TOKEN
-    bot_count = len(ACCOUNTS)
+    # Read from Environment Variables (set in Render Dashboard) or fallback to defaults
+    room_id = os.environ.get("ROOM_ID", DEFAULT_ROOM_ID)
+    room_token = os.environ.get("ROOM_TOKEN", DEFAULT_ROOM_TOKEN)
+    
+    try:
+        env_bot_count = os.environ.get("BOT_COUNT")
+        bot_count = int(env_bot_count) if env_bot_count else len(ACCOUNTS)
+        if bot_count < 1 or bot_count > len(ACCOUNTS):
+            bot_count = len(ACCOUNTS)
+    except ValueError:
+        bot_count = len(ACCOUNTS)
 
     selected_accounts = ACCOUNTS[:bot_count]
     print(f"\n✅ {bot_count} bots will be started with Room: {room_id}")
     print("="*50 + "\n")
 
-    # ========== START FLASK ==========
+    # ========== START FLASK (for Render) ==========
     print("⚡ Starting Flask server...")
     threading.Thread(target=keep_alive, daemon=True).start()
     time.sleep(2)
@@ -201,9 +212,11 @@ if __name__ == '__main__':
         uid = acc['uid']
         print(f"🔄 Bot {idx} (UID: {uid}) starting...")
         threading.Thread(target=start_bot, args=(acc, room_id, room_token), daemon=True).start()
-        time.sleep(3)
+        time.sleep(3)  # Throttle
 
-    print("\n✅ All bots are running continuously.")
+    print("\n✅ All bots are running.")
+    print("📁 Logs are saved in 'logs/' folder.\n")
     
+    # Keep alive loop
     while True:
         time.sleep(60)
